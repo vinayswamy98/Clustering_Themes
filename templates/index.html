@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reason Validation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .custom-file-upload {
+            border: 1px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 4px;
+        }
+        .progress-wrapper {
+            margin: 20px 0;
+        }
+        #validationProgress {
+            height: 25px;
+        }
+        .metrics-card {
+            margin: 10px 0;
+        }
+        .timestamp {
+            font-size: 0.8em;
+            color: #666;
+        }
+        .user-info {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 0.9em;
+        }
+        .model-info {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .model-description {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="user-info">
+            <span class="badge bg-info">User: vinayswamy98</span>
+            <span class="badge bg-secondary">UTC: 2025-10-30 05:52:11</span>
+        </div>
+
+        <h2 class="mb-4">Reason Validation System</h2>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Configuration</h5>
+
+                <div class="model-info mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="modelSelect" class="form-label">Select Model</label>
+                            <select id="modelSelect" class="form-select">
+                                <option value="claude-3-haiku-20240307">Claude 3 Haiku</option>
+                                <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+                                <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                                <option value="gpt-4-turbo-preview">GPT-4 Turbo</option>
+                                <option value="gpt-4">GPT-4</option>
+                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            </select>
+                            <div id="modelInfo" class="model-description">
+                                Claude 3 Haiku: Fastest and most cost-effective model for simple tasks
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="model-specs mt-3">
+                                <small>
+                                    <strong>Model Specifications:</strong>
+                                    <ul class="list-unstyled">
+                                        <li id="modelContext">Context: 200K tokens</li>
+                                        <li id="modelSpeed">Speed: Very Fast</li>
+                                        <li id="modelCost">Cost: $0.25/1M tokens</li>
+                                    </ul>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="pdfFile" class="custom-file-upload">
+                        <i class="fas fa-file-pdf"></i> Guidelines PDF
+                    </label>
+                    <input type="file" id="pdfFile" accept=".pdf" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="excel1" class="custom-file-upload">
+                        <i class="fas fa-file-excel"></i> Score Scale Excel
+                    </label>
+                    <input type="file" id="excel1" accept=".xlsx,.xls" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="excel2" class="custom-file-upload">
+                        <i class="fas fa-file-excel"></i> Reason Examples Excel
+                    </label>
+                    <input type="file" id="excel2" accept=".xlsx,.xls" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="excel3" class="custom-file-upload">
+                        <i class="fas fa-file-excel"></i> Records Excel
+                    </label>
+                    <input type="file" id="excel3" accept=".xlsx,.xls" class="form-control" required>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="batchSize" class="form-label">Batch Size</label>
+                        <input type="number" id="batchSize" class="form-control" value="50" min="1" max="100">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="concurrent" class="form-label">Max Concurrent Calls</label>
+                        <input type="number" id="concurrent" class="form-control" value="5" min="1" max="10">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="topK" class="form-label">Top K</label>
+                        <input type="number" id="topK" class="form-control" value="5" min="1" max="10">
+                    </div>
+                </div>
+
+                <button id="startValidation" class="btn btn-primary">Start Validation</button>
+            </div>
+        </div>
+
+        <div class="progress-wrapper" style="display: none;">
+            <h5>Validation Progress</h5>
+            <div class="progress">
+                <div id="validationProgress" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+            </div>
+        </div>
+
+        <div id="metricsContainer" style="display: none;">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card metrics-card">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Records</h6>
+                            <p id="totalRecords" class="h3">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metrics-card">
+                        <div class="card-body">
+                            <h6 class="card-title">LLM Calls</h6>
+                            <p id="llmCalls" class="h3">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metrics-card">
+                        <div class="card-body">
+                            <h6 class="card-title">Errors</h6>
+                            <p id="totalErrors" class="h3">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metrics-card">
+                        <div class="card-body">
+                            <h6 class="card-title">Average Duration</h6>
+                            <p id="avgDuration" class="h3">0s</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsContainer" class="mt-4" style="display: none;">
+            <h5>Results</h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Quality</th>
+                            <th>Confidence</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    <script>
+        // Model specifications
+        const modelSpecs = {
+            'claude-3-haiku-20240307': {
+                description: 'Fastest and most cost-effective model for simple tasks',
+                context: '200K tokens',
+                speed: 'Very Fast',
+                cost: '$0.25/1M tokens'
+            },
+            'claude-3-sonnet-20240229': {
+                description: 'Balanced performance for complex reasoning tasks',
+                context: '400K tokens',
+                speed: 'Fast',
+                cost: '$3/1M tokens'
+            },
+            'claude-3-opus-20240229': {
+                description: 'Most capable model for complex analysis',
+                context: '1M tokens',
+                speed: 'Standard',
+                cost: '$15/1M tokens'
+            },
+            'gpt-4-turbo-preview': {
+                description: 'Latest GPT-4 model with improved capabilities',
+                context: '128K tokens',
+                speed: 'Fast',
+                cost: '$10/1M tokens'
+            },
+            'gpt-4': {
+                description: 'Stable GPT-4 model for reliable results',
+                context: '8K tokens',
+                speed: 'Standard',
+                cost: '$30/1M tokens'
+            },
+            'gpt-3.5-turbo': {
+                description: 'Fast and cost-effective for simple tasks',
+                context: '16K tokens',
+                speed: 'Very Fast',
+                cost: '$0.5/1M tokens'
+            }
+        };
+
+        // Update model information when selection changes
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('modelSelect').addEventListener('change', function(e) {
+                const model = modelSpecs[this.value];
+                document.getElementById('modelInfo').textContent = model.description;
+                document.getElementById('modelContext').textContent = `Context: ${model.context}`;
+                document.getElementById('modelSpeed').textContent = `Speed: ${model.speed}`;
+                document.getElementById('modelCost').textContent = `Cost: ${model.cost}`;
+            });
+        });
+
+        const API_ENDPOINT = '/api/validate';
+        let validationInProgress = false;
+
+        async function startValidation() {
+            if (validationInProgress) return;
+            validationInProgress = true;
+
+            const formData = new FormData();
+            formData.append('pdf', document.getElementById('pdfFile').files[0]);
+            formData.append('excel1', document.getElementById('excel1').files[0]);
+            formData.append('excel2', document.getElementById('excel2').files[0]);
+            formData.append('excel3', document.getElementById('excel3').files[0]);
+            formData.append('batchSize', document.getElementById('batchSize').value);
+            formData.append('concurrent', document.getElementById('concurrent').value);
+            formData.append('topK', document.getElementById('topK').value);
+            formData.append('model', document.getElementById('modelSelect').value);
+
+            document.querySelector('.progress-wrapper').style.display = 'block';
+            document.getElementById('metricsContainer').style.display = 'block';
+            document.getElementById('resultsContainer').style.display = 'block';
+
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const reader = response.body.getReader();
+                let buffer = "";
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    buffer += new TextDecoder("utf-8").decode(value);
+
+                    // Split on newlines for chunked JSON
+                    let lines = buffer.split('\n');
+                    buffer = lines.pop(); // Last line may be incomplete, keep it for next chunk
+
+                    for (const line of lines) {
+                        if (line.trim() === "") continue;
+                        try {
+                            const data = JSON.parse(line);
+                            updateUI(data);
+                        } catch (err) {
+                            // Ignore incomplete JSON
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Validation error:', error);
+                alert('Error during validation. Please check console for details.');
+            } finally {
+                validationInProgress = false;
+            }
+        }
+
+        document.getElementById('startValidation').addEventListener('click', startValidation);
+
+        function updateUI(data) {
+            // Update progress
+            const progress = document.getElementById('validationProgress');
+            progress.style.width = `${data.progress}%`;
+            progress.textContent = `${data.progress}%`;
+
+            // Update metrics
+            document.getElementById('totalRecords').textContent = data.total_records || 0;
+            document.getElementById('llmCalls').textContent = data.llm_calls || 0;
+            document.getElementById('totalErrors').textContent = data.errors || 0;
+            document.getElementById('avgDuration').textContent = data.avg_duration ? `${data.avg_duration.toFixed(2)}s` : '0s';
+
+            // Update results table
+            if (data.results && data.results.length > 0) {
+                const tbody = document.getElementById('resultsBody');
+                tbody.innerHTML = '';
+                
+                data.results.forEach(result => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${result.title || ''}</td>
+                        <td><span class="badge bg-${result.status === 'success' ? 'success' : 'danger'}">${result.status || ''}</span></td>
+                        <td>${result.quality || ''}</td>
+                        <td>${result.confidence ? (result.confidence * 100).toFixed(1) + '%' : ''}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewDetails('${result.id || ''}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('resultsContainer').style.display = 'block';
+            }
+        }
+
+        function viewDetails(id) {
+            // Implement detail view logic
+            console.log('Viewing details for:', id);
+        }
+    </script>
+</body>
+</html>
