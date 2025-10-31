@@ -1,0 +1,51 @@
+id,customer_name,feedback_text,category,rating,date
+1,John Smith,The pricing is too high for small businesses. We need more affordable plans.,Pricing,2,2025-01-15
+2,Jane Doe,Product quality has declined recently. Many bugs in the latest release.,Quality,3,2025-01-16
+3,Bob Johnson,Support team is unresponsive. Takes days to get a reply.,Support,2,2025-01-17
+4,Alice Williams,Missing critical features that competitors have. Need more functionality.,Features,3,2025-01-18
+5,Charlie Brown,Interface is confusing and not intuitive. UX needs redesign.,UX,2,2025-01-19
+6,David Lee,System is slow and laggy. Performance issues affecting work.,Performance,2,2025-01-20
+7,Emma Wilson,Security concerns with data handling. Need better encryption.,Security,3,2025-01-21
+8,Frank Miller,Doesn't integrate well with our existing tools. API limitations.,Integration,3,2025-01-22
+9,Grace Taylor,Documentation is outdated and incomplete. Hard to learn the system.,Documentation,2,2025-01-23
+10,Henry Davis,Great product overall! Team loves using it daily.,General,5,2025-01-24
+11,Isabel Martinez,Budget constraints make it difficult to justify the cost. Please offer discounts.,Pricing,2,2025-01-25
+12,Jack Anderson,Cost is a major concern. The value doesn't match the price point.,Pricing,2,2025-01-26
+13,Karen Thomas,The software crashes frequently. Quality control issues are evident.,Quality,2,2025-01-27
+14,Leo Jackson,Features don't work as advertised. Poor quality overall.,Quality,3,2025-01-28
+15,Maria Garcia,Customer service needs improvement. Long wait times for tickets.,Support,3,2025-01-29
+16,Nathan White,Support staff is helpful but response time is too slow.,Support,3,2025-01-30
+17,Olivia Harris,Would love to see integration with other tools. Feature requests ignored.,Features,3,2025-01-31
+18,Peter Clark,The feature set is limited. Need more customization options.,Features,3,2025-02-01
+19,Quinn Lewis,Navigation is difficult. User experience could be much better.,UX,2,2025-02-02
+20,Rachel Walker,Too many clicks to complete simple tasks. Poor usability.,UX,2,2025-02-03
+21,Sam Hall,Load times are unacceptable. Need significant performance improvements.,Performance,2,2025-02-04
+22,Tina Allen,Application freezes frequently. Performance optimization required.,Performance,2,2025-02-05
+23,Uma Young,Privacy policy is unclear. Want more transparency about data usage.,Security,3,2025-02-06
+24,Victor King,Worried about data breaches. Security measures seem inadequate.,Security,2,2025-02-07
+25,Wendy Wright,Need better integration options with third-party services.,Integration,3,2025-02-08
+26,Xavier Scott,API documentation is poor. Integration is challenging.,Integration,3,2025-02-09
+27,Yara Green,Need more training resources and tutorials. Onboarding is difficult.,Documentation,2,2025-02-10
+28,Zack Adams,Knowledge base articles are not helpful. Better documentation needed.,Documentation,2,2025-02-11
+29,Amy Baker,Excellent value for money. Very satisfied with the features.,General,5,2025-02-12
+30,Brian Carter,Support team is fantastic. Always helpful and responsive.,General,5,2025-02-13
+31,Catherine Evans,Expensive compared to competitors. Need better pricing tiers.,Pricing,2,2025-02-14
+32,Daniel Foster,Price increase was unexpected. Hard to budget for this.,Pricing,2,2025-02-15
+33,Emily Gray,Reliability issues causing productivity loss. Quality needs improvement.,Quality,2,2025-02-16
+34,Felix Hill,Too many defects in the product. QA process seems insufficient.,Quality,2,2025-02-17
+35,Gina Irving,Need better support documentation and faster resolution times.,Support,3,2025-02-18
+36,Harry Jones,Support experience has been frustrating. Hard to reach anyone.,Support,2,2025-02-19
+37,Iris Kelly,Lacking advanced features for enterprise use. Please add more capabilities.,Features,3,2025-02-20
+38,Jake Lopez,Feature requests take too long to implement. More innovation needed.,Features,3,2025-02-21
+39,Kara Moore,Design is outdated. Modern UI/UX would greatly improve the experience.,UX,2,2025-02-22
+40,Liam Nelson,Learning curve is steep. Need better onboarding and UX.,UX,2,2025-02-23
+41,Mia Owen,Speed has degraded over time. Performance monitoring needed.,Performance,2,2025-02-24
+42,Noah Perry,Response time is poor during peak hours. Scalability concerns.,Performance,2,2025-02-25
+43,Olga Quinn,Compliance requirements not met. Security certifications needed.,Security,2,2025-02-26
+44,Paul Reed,Data protection features are insufficient. Privacy is a major concern.,Security,2,2025-02-27
+45,Quincy Stone,Lack of webhook support makes automation difficult.,Integration,3,2025-02-28
+46,Rita Turner,Integration capabilities are limited compared to alternatives.,Integration,3,2025-03-01
+47,Steve Underwood,Training materials are insufficient for new users.,Documentation,2,2025-03-02
+48,Tara Vincent,Would benefit from video tutorials and better guides.,Documentation,3,2025-03-03
+49,Ulysses Ward,Product has improved our workflow significantly. Highly recommend.,General,5,2025-03-04
+50,Violet Xavier,Easy to use and reliable. Best tool we've implemented this year.,General,5,2025-03-05
