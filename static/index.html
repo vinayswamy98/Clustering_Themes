@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Large Dataset Clustering Analysis</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🔍 Large Dataset Clustering Analysis</h1>
+            <p class="subtitle">Upload, analyze, and cluster large CSV datasets with interactive column selection</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Step 1: File Upload -->
+            <section id="upload-section" class="section active">
+                <div class="section-header">
+                    <span class="step-number">1</span>
+                    <h2>Upload Dataset</h2>
+                </div>
+                
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📁</div>
+                    <p class="upload-text">Drag & drop your CSV file here</p>
+                    <p class="upload-subtext">or click to browse</p>
+                    <input type="file" id="file-input" accept=".csv,.xlsx,.xls" hidden>
+                    <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                        Choose File
+                    </button>
+                </div>
+                
+                <div id="file-info" class="file-info" style="display: none;">
+                    <h3>File Information</h3>
+                    <div id="file-details"></div>
+                </div>
+            </section>
+
+            <!-- Step 2: Column Selection -->
+            <section id="column-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <span class="step-number">2</span>
+                    <h2>Select Columns for Analysis</h2>
+                </div>
+                
+                <div class="info-box">
+                    <p><strong>Instructions:</strong> Select which columns to use for clustering. 
+                    Text columns with meaningful content work best.</p>
+                </div>
+                
+                <div id="column-analysis" class="column-analysis">
+                    <!-- Will be populated dynamically -->
+                </div>
+                
+                <div class="preview-section">
+                    <h3>Data Preview (First 10 rows)</h3>
+                    <div id="data-preview" class="data-preview">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" id="next-to-config" disabled>
+                    Next: Configure Parameters
+                </button>
+            </section>
+
+            <!-- Step 3: Configuration -->
+            <section id="config-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <span class="step-number">3</span>
+                    <h2>Configure Clustering Parameters</h2>
+                </div>
+                
+                <div class="config-form">
+                    <div class="form-group">
+                        <label for="min-cluster-size">
+                            Minimum Cluster Size
+                            <span class="tooltip">ℹ️
+                                <span class="tooltip-text">Minimum number of items required to form a cluster</span>
+                            </span>
+                        </label>
+                        <input type="number" id="min-cluster-size" value="3" min="2" max="50">
+                        <small>Recommended: 3-5 for most datasets</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="min-samples">
+                            Minimum Samples
+                            <span class="tooltip">ℹ️
+                                <span class="tooltip-text">Controls how conservative the clustering is</span>
+                            </span>
+                        </label>
+                        <input type="number" id="min-samples" value="2" min="1" max="20">
+                        <small>Recommended: 2-3 for balanced results</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="batch-size">
+                            Batch Size (for embedding generation)
+                            <span class="tooltip">ℹ️
+                                <span class="tooltip-text">Number of items processed at once</span>
+                            </span>
+                        </label>
+                        <input type="number" id="batch-size" value="32" min="8" max="128">
+                        <small>Recommended: 32 for most systems</small>
+                    </div>
+                </div>
+                
+                <div class="selected-columns-summary">
+                    <h3>Selected Configuration</h3>
+                    <div id="config-summary"></div>
+                </div>
+                
+                <button class="btn btn-success btn-large" id="start-analysis">
+                    🚀 Start Clustering Analysis
+                </button>
+            </section>
+
+            <!-- Step 4: Progress & Results -->
+            <section id="results-section" class="section" style="display: none;">
+                <div class="section-header">
+                    <span class="step-number">4</span>
+                    <h2>Analysis Results</h2>
+                </div>
+                
+                <!-- Progress Tracker -->
+                <div id="progress-container" class="progress-container">
+                    <h3>Processing...</h3>
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                    <p id="progress-stage" class="progress-stage">Initializing...</p>
+                    <p id="progress-percent" class="progress-percent">0%</p>
+                </div>
+                
+                <!-- Results Dashboard -->
+                <div id="results-dashboard" class="results-dashboard" style="display: none;">
+                    <div class="results-summary">
+                        <h3>Clustering Summary</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-clusters">-</div>
+                                <div class="stat-label">Clusters Found</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-rows">-</div>
+                                <div class="stat-label">Total Rows</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-noise">-</div>
+                                <div class="stat-label">Noise Points</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-largest">-</div>
+                                <div class="stat-label">Largest Cluster</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cluster-details">
+                        <h3>Cluster Distribution</h3>
+                        <div id="cluster-chart" class="cluster-chart">
+                            <!-- Will be populated with cluster visualization -->
+                        </div>
+                    </div>
+                    
+                    <div class="cluster-samples">
+                        <h3>Sample Data from Clusters</h3>
+                        <div id="cluster-samples-container">
+                            <!-- Will be populated with sample data -->
+                        </div>
+                    </div>
+                    
+                    <div class="export-section">
+                        <h3>Export Results</h3>
+                        <div class="export-buttons">
+                            <button class="btn btn-secondary" id="export-json">
+                                📄 Download JSON
+                            </button>
+                            <button class="btn btn-secondary" id="export-csv">
+                                📊 Download CSV
+                            </button>
+                            <button class="btn btn-secondary" id="export-report">
+                                📝 Download Report
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="start-new">
+                        🔄 Start New Analysis
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by HDBSCAN Clustering & Sentence Transformers</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
