@@ -1,3 +1,4 @@
+python
 from flask import Flask, render_template, request, Response, stream_with_context
 import json
 import asyncio
@@ -6,7 +7,7 @@ import os
 from reasoning_quality_checking_async_improved import process_batch, process_guidelines
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain_anthropic import ChatAnthropic
+import requests
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -27,7 +28,8 @@ async def process_validation(pdf_path, excel1_path, excel2_path, excel3_path, ba
     # Setup
     embeddings = SentenceTransformerEmbeddings(model_name='all-MiniLM-L6-v2')
     vectorstore = Chroma(persist_directory='./chroma_langchain', embedding_function=embeddings)
-    llm = ChatAnthropic(model="claude-3-haiku-20240307", api_key=os.environ['ANTHROPIC_API_KEY'])
+    llm_endpoint = os.environ['OPEN_ROUTER_ENDPOINT']
+    headers = {"Authorization": f"Bearer {os.environ['OPEN_ROUTER_API_KEY']}"}
     
     # Initialize metrics
     total_records = 0
@@ -39,7 +41,7 @@ async def process_validation(pdf_path, excel1_path, excel2_path, excel3_path, ba
         await process_guidelines(pdf_path, excel1_path, excel2_path)
         
         # Process records in chunks
-        async for chunk_result in process_batch(excel3_path, vectorstore, llm, batch_size, concurrent_calls, top_k):
+        async for chunk_result in process_batch(excel3_path, vectorstore, llm_endpoint, headers, batch_size, concurrent_calls, top_k):
             total_records += len(chunk_result['results'])
             current_progress = (total_records / chunk_result['total_expected']) * 100
             
@@ -71,7 +73,7 @@ def validate():
         excel2_path = save_uploaded_file(request.files['excel2'], 'examples.xlsx')
         excel3_path = save_uploaded_file(request.files['excel3'], 'records.xlsx')
         
-        batch_size = int(request.form.get('batchSize', 50))
+batch_size = int(request.form.get('batchSize', 50))
         concurrent_calls = int(request.form.get('concurrent', 5))
         top_k = int(request.form.get('topK', 5))
         
