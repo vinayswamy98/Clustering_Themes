@@ -248,12 +248,32 @@ This system integrates with the existing LangGraph-based clustering in `thematic
 
 ## Security Considerations
 
-- File uploads are stored temporarily in `static/uploads/`
-- Results are stored in `static/results/`
-- Add these directories to `.gitignore` to avoid committing sensitive data
-- Consider adding authentication for production use
-- Implement file size limits and validation
-- Clean up old files periodically
+### Production Deployment
+- **Debug Mode**: Disabled by default. Set `FLASK_DEBUG=true` environment variable only for development
+- **File Upload Security**: 
+  - Filename sanitization using `secure_filename()`
+  - File size limits (500MB, configurable)
+  - File type validation (CSV, Excel only)
+  - Path traversal prevention
+- **Error Handling**: Generic error messages to prevent information disclosure
+- **File Storage**: 
+  - Uploaded files stored in `static/uploads/` with timestamped filenames
+  - Results stored in `static/results/`
+  - Add these directories to `.gitignore` to avoid committing sensitive data
+- **Path Validation**: All file paths are normalized and validated to prevent directory traversal
+- **Input Validation**: All user inputs are validated before processing
+
+### Recommendations for Production
+- Add authentication and authorization
+- Implement rate limiting
+- Use HTTPS
+- Regular cleanup of old files
+- Monitor disk usage
+- Set up proper logging
+- Use a production WSGI server (e.g., Gunicorn, uWSGI)
+- Configure CORS appropriately
+- Add CSRF protection for API endpoints
+- Implement file scanning for malware
 
 ## Future Enhancements
 

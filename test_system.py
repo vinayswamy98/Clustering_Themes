@@ -113,8 +113,11 @@ def test_api_imports():
         print(f"✓ Upload folder: {app_large_dataset.UPLOAD_FOLDER}")
         print(f"✓ Results folder: {app_large_dataset.RESULTS_FOLDER}")
         return True
+    except ImportError as e:
+        print(f"\n✗ Import error: {e}")
+        return False
     except Exception as e:
-        print(f"\n✗ Error importing Flask app: {e}")
+        print(f"\n✗ Unexpected error importing Flask app: {e}")
         return False
 
 def main():

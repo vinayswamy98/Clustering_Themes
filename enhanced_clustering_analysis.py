@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from typing import List, Dict, Optional, Iterator
 from sentence_transformers import SentenceTransformer
-from sklearn.cluster import HDBSCAN
+from hdbscan import HDBSCAN
 from sklearn.metrics.pairwise import cosine_similarity
 import json
 from datetime import datetime

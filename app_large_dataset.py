@@ -25,6 +25,8 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 UPLOAD_FOLDER = 'static/uploads'
 RESULTS_FOLDER = 'static/results'
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'xls'}
+# Maximum file size: 500MB - adjust based on available memory
+# For large files, ensure sufficient RAM (recommend 2-4x the file size)
 MAX_CONTENT_LENGTH = 500 * 1024 * 1024  # 500MB
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -99,7 +101,9 @@ def upload_file():
         })
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Security: Log the error but don't expose details to user
+        app.logger.error(f"Upload error: {str(e)}")
+        return jsonify({'error': 'Upload failed. Please check file format and try again.'}), 500
 
 
 @app.route('/api/analyze', methods=['POST'])
@@ -127,8 +131,18 @@ def analyze_dataset():
         min_samples = data.get('min_samples', 2)
         batch_size = data.get('batch_size', 32)
         
-        if not filepath or not os.path.exists(filepath):
+        # Security: Validate filepath to prevent path traversal
+        if not filepath:
             return jsonify({'error': 'Invalid file path'}), 400
+        
+        # Ensure filepath is within the upload folder
+        filepath = os.path.normpath(filepath)
+        if not filepath.startswith('static/uploads/'):
+            return jsonify({'error': 'Invalid file path'}), 400
+        
+        # Check if file exists
+        if not os.path.exists(filepath):
+            return jsonify({'error': 'File not found'}), 400
         
         if not text_columns:
             return jsonify({'error': 'At least one text column must be selected'}), 400
@@ -220,7 +234,9 @@ def analyze_dataset():
         })
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Security: Log the error but don't expose details to user
+        app.logger.error(f"Analysis start error: {str(e)}")
+        return jsonify({'error': 'Failed to start analysis. Please check your parameters.'}), 500
 
 
 @app.route('/api/status/<job_id>', methods=['GET'])
@@ -292,9 +308,17 @@ def export_results(job_id, export_type):
     
     results = job['results']
     
+    # Security: Validate export_type to prevent path traversal
+    if export_type not in ['json', 'csv', 'report']:
+        return jsonify({'error': 'Invalid export type'}), 400
+    
     if export_type == 'json':
         filename = f"results_{job_id}.json"
         filepath = os.path.join(app.config['RESULTS_FOLDER'], filename)
+        # Security: Ensure file is within results folder
+        filepath = os.path.normpath(filepath)
+        if not filepath.startswith(os.path.normpath(app.config['RESULTS_FOLDER'])):
+            return jsonify({'error': 'Invalid file path'}), 400
         if os.path.exists(filepath):
             return send_file(filepath, as_attachment=True, download_name=filename)
     
@@ -302,6 +326,10 @@ def export_results(job_id, export_type):
         csv_filename = results.get('csv_export')
         if csv_filename:
             filepath = os.path.join(app.config['RESULTS_FOLDER'], csv_filename)
+            # Security: Ensure file is within results folder
+            filepath = os.path.normpath(filepath)
+            if not filepath.startswith(os.path.normpath(app.config['RESULTS_FOLDER'])):
+                return jsonify({'error': 'Invalid file path'}), 400
             if os.path.exists(filepath):
                 return send_file(filepath, as_attachment=True, download_name=csv_filename)
     
@@ -309,6 +337,10 @@ def export_results(job_id, export_type):
         report_filename = results.get('report_export')
         if report_filename:
             filepath = os.path.join(app.config['RESULTS_FOLDER'], report_filename)
+            # Security: Ensure file is within results folder
+            filepath = os.path.normpath(filepath)
+            if not filepath.startswith(os.path.normpath(app.config['RESULTS_FOLDER'])):
+                return jsonify({'error': 'Invalid file path'}), 400
             if os.path.exists(filepath):
                 return send_file(filepath, as_attachment=True, download_name=report_filename)
     
@@ -326,4 +358,8 @@ def health_check():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001, threaded=True)
+    # Security: Disable debug mode in production
+    # Set debug=False or use environment variable for production deployments
+    import os
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5001, threaded=True)
