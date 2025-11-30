@@ -86,17 +86,18 @@ def update_knowledge_state(p_known: float, is_correct: bool, params: BKTParams) 
         p_correct_given_unknown = p_g
         p_correct = p_known * p_correct_given_known + (1 - p_known) * p_correct_given_unknown
         
-        p_known_given_correct = (p_known * p_correct_given_known) / p_correct
+        p_known_given_observation = (p_known * p_correct_given_known) / p_correct
     else:
         # P(L|incorrect) using Bayes' rule
         p_incorrect_given_known = p_s
         p_incorrect_given_unknown = 1 - p_g
         p_incorrect = p_known * p_incorrect_given_known + (1 - p_known) * p_incorrect_given_unknown
         
-        p_known_given_correct = (p_known * p_incorrect_given_known) / p_incorrect
+        p_known_given_observation = (p_known * p_incorrect_given_known) / p_incorrect
     
     # Apply learning transition
-    p_learned = p_known_given_correct + (1 - p_known_given_correct) * p_t
+    # P(L_new) = P(L|obs) + (1 - P(L|obs)) * P(T)
+    p_learned = p_known_given_observation + (1 - p_known_given_observation) * p_t
     
     return p_learned
 ```
