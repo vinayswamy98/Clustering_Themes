@@ -83,6 +83,83 @@ examforge/
 
 ## 🚀 Getting Started
 
+### Prerequisites
+
+- Python 3.11+
+- Node.js 18+
+- npm or yarn
+
+### Running the API Server
+
+```bash
+# Navigate to the API directory
+cd examforge/api
+
+# Create a virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Create .env file with your configuration
+cat > .env << EOF
+DEBUG=true
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_key
+OPENAI_API_KEY=your_openai_key
+EOF
+
+# Run the development server
+uvicorn src.main:app --reload --port 8000
+
+# API will be available at http://localhost:8000
+# API docs at http://localhost:8000/docs
+```
+
+### Running the Mobile App (React Native + Expo)
+
+```bash
+# Navigate to the mobile directory
+cd examforge/mobile
+
+# Install dependencies
+npm install
+
+# Start the Expo development server
+npm start
+
+# Then scan the QR code with Expo Go app on your phone
+# Or press 'a' for Android emulator, 'i' for iOS simulator
+```
+
+### Running the Web Dashboard (Next.js)
+
+```bash
+# Navigate to the web directory
+cd examforge/web
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Web app will be available at http://localhost:3000
+```
+
+### Quick API Test
+
+Once the API is running, test it with:
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# View API documentation
+open http://localhost:8000/docs
+```
+
 See [MVP_SPEC.md](docs/MVP_SPEC.md) for the detailed launch plan.
 
 ## 📊 Competitive Advantages
