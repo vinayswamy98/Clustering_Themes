@@ -69,3 +69,26 @@ models/
 tmp/
 temp/
 *.tmp
+
+# ExamForge Mobile (React Native/Expo)
+examforge/mobile/node_modules/
+examforge/mobile/.expo/
+examforge/mobile/dist/
+examforge/mobile/web-build/
+examforge/mobile/.expo-shared/
+examforge/mobile/ios/
+examforge/mobile/android/
+
+# ExamForge Web (Next.js)
+examforge/web/node_modules/
+examforge/web/.next/
+examforge/web/out/
+
+# ExamForge API
+examforge/api/.env
+examforge/api/__pycache__/
+
+# Environment files
+.env
+.env.local
+.env.*.local
